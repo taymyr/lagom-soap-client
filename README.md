@@ -1,3 +1,9 @@
+[![Gitter](https://img.shields.io/badge/chat-gitter-purple.svg)](https://gitter.im/taymyr/taymyr)
+[![Gitter_RU](https://img.shields.io/badge/chat-russian%20channel-purple.svg)](https://gitter.im/taymyr/taymyr_ru)
+[![Build Status](https://travis-ci.org/taymyr/lagom-soap-client.svg?branch=master)](https://travis-ci.org/taymyr/lagom-soap-client)
+[![codecov](https://codecov.io/gh/taymyr/lagom-soap-client/branch/master/graph/badge.svg)](https://codecov.io/gh/taymyr/lagom-soap-client)
+[![Maven Central](https://img.shields.io/maven-central/v/org.taymyr.lagom/lagom-soap-client_2.12.svg)](https://search.maven.org/search?q=a:lagom-soap-client-java_2.12%20AND%20g:org.taymyr.lagom)
+
 # Lagom SOAP client
 
 TODO
