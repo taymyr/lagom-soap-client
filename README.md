@@ -46,7 +46,7 @@ and use `bindSoapClient` method for registration client. Also you can register S
 For example:
 
 ```java
-import ru.atconsulting.tele2.lagom.soap.ServiceGuiceSupport;
+import org.taymyr.lagom.soap.ServiceGuiceSupport;
     
 public class MyServiceModule extends AbstractModule implements ServiceGuiceSupport {
     @Override
