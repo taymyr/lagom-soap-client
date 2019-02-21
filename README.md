@@ -37,7 +37,7 @@ val externalSoapClient = "foo.bar" %% "external-async-client" % "X.Y.Z"
 
 ### 2. Add the dependency
 
-See [Adding the dependency](#Adding the dependency)
+See [Adding the dependency](#adding-the-dependency)
 
 ### 3. Register async client
 
