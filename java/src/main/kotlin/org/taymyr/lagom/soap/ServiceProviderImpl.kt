@@ -46,6 +46,7 @@ constructor(
         this.getPortMethod = findGetPortMethod(serviceClass, portClass)
         this.factory = ProxyFactory()
         this.factory.interfaces = arrayOf(portClass)
+        this.factory.setFilter { m -> m.declaringClass == portClass }
     }
 
     @Throws(NoSuchMethodException::class)
