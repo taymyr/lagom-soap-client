@@ -15,7 +15,7 @@ object Versions {
     const val `kotlin-logging` = "1.6.22"
     const val config4k = "0.4.1"
     const val javassist = "3.21.0-GA"
-    const val `play-soap` = "1.1.4"
+    const val `play-soap` = "1.1.5"
     const val junit5 = "5.3.2"
     const val assertj = "3.11.1"
     const val jacoco = "0.8.2"

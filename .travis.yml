@@ -6,6 +6,7 @@ jdk:
 env:
   - SCALA_VERSION=2.11 LAGOM_VERSION=1.4.15
   - SCALA_VERSION=2.12 LAGOM_VERSION=1.5.1
+  - SCALA_VERSION=2.13 LAGOM_VERSION=1.6.2
 
 matrix:
   fast_finish: true
