@@ -14,9 +14,9 @@ Lagom SOAP use [Play SAOP](https://github.com/playframework/play-soap) library a
 
 ## Versions compatibility
 
-| Lagom Soap Client | Lagom           | Scala          |
-|-------------------|-----------------|----------------|
-| 1.+               | 1.4.+ <br> 1.5.+| 2.11 <br> 2.12 |
+| Lagom Soap Client | Lagom                      | Scala                    |
+|-------------------|----------------------------|--------------------------|
+| 1.+               | 1.4.+ <br> 1.5.+ <br> 1.6.+| 2.11 <br> 2.12 <br> 2.13 |
 
 ## How to use
 

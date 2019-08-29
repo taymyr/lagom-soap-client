@@ -1,5 +1,6 @@
 val ossrhUsername: String? by project
 val ossrhPassword: String? by project
+val projectVersion: String by project
 
 plugins {
     id("io.codearte.nexus-staging") version "0.20.0"
@@ -14,7 +15,7 @@ allprojects {
 
 subprojects {
     group = "org.taymyr.lagom"
-    version = "1.1.0-SNAPSHOT"
+    version = projectVersion
 }
 
 nexusStaging {
