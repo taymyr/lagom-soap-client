@@ -35,6 +35,7 @@ constructor(
     private val serviceProvider: Provider<S>,
     private val breakersProvider: Provider<CircuitBreakersPanel>,
     private val configProvider: Provider<Config>,
+    private val invokeHandlers: List<InvokeHandler<P>>,
     private vararg val handlers: Handler<SOAPMessageContext>
 ) : ServiceProvider<P> {
 
@@ -75,13 +76,16 @@ constructor(
      * Method handler for proxy object of SOAP service port.
      */
     private inner class PortProxyInvokeHandler
-    internal constructor(private val invokeHandlers: List<InvokeHandler<P>>, vararg soapHandlers: Handler<SOAPMessageContext>) :
+    internal constructor(invokeMethodHandlers: List<InvokeHandler<P>>, vararg soapHandlers: Handler<SOAPMessageContext>) :
         MethodHandler {
 
         private val config: Config
         private val breakerConfig: Config
         private val service: S = serviceProvider.get()
         private val soapHandlers: Array<Handler<SOAPMessageContext>>
+        private val invokeHandlers: List<InvokeHandler<P>>
+        private val port: P
+        private val isSingleton: Boolean
 
         init {
             val globalConfig = configProvider.get()
@@ -92,10 +96,13 @@ constructor(
             val configPortPath = "$name.ports.${portClass.name}"
             this.config = if (pssConfig.hasPath(configPortPath)) pssConfig.getConfig(configPortPath) else pssConfig.getConfig(name)
             this.soapHandlers = arrayOf(*soapHandlers).plus(handlers)
+            this.invokeHandlers = this@ServiceProviderImpl.invokeHandlers.plus(invokeMethodHandlers)
+            this.isSingleton = if (config.hasPath("singleton")) config.getBoolean("singleton") else false
+            this.port = if (isSingleton) createPort() else Unit as P
         }
 
         override fun invoke(self: Any?, thisMethod: Method?, proceed: Method?, args: Array<out Any>?): Any {
-            val port = createPort(thisMethod!!)
+            val port = if (isSingleton) this.port else createPort()
             return breakersProvider.get().withCircuitBreaker(name) {
                 try {
                     invokeService(port, thisMethod!!, args ?: emptyArray())
@@ -125,6 +132,15 @@ constructor(
                 }
             }
 
+        private fun afterInit(port: P) =
+            invokeHandlers.forEach {
+                try {
+                    it.afterInit(port)
+                } catch (e: Exception) {
+                    log.error(e) { "Handle after initialization '$port' failed" }
+                }
+            }
+
         @Throws(InvocationTargetException::class, IllegalAccessException::class)
         private fun invokeService(port: P, method: Method, args: Array<out Any>): CompletionStage<Any> {
             before(port, method)
@@ -138,7 +154,7 @@ constructor(
             }
         }
 
-        private fun createPort(thisMethod: Method): P {
+        private fun createPort(): P {
             // http://cxf.apache.org/faq.html#FAQ-AreJAX-WSclientproxiesthreadsafe%3F
             @Suppress("unchecked_cast")
             val port = getPortMethod.invoke(service, soapHandlers as Any) as P
@@ -149,6 +165,7 @@ constructor(
             httpClientPolicy.connectionTimeout = timeout
             httpClientPolicy.connectionRequestTimeout = timeout
             httpClientPolicy.browserType = config.extract("browser-type") ?: "lagom"
+            afterInit(port)
             return port
         }
     }
