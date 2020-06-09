@@ -134,6 +134,8 @@ public class MyServiceImpl implements MyService {
 
 * Configure value of _User-Agent_ header `play.soap.services.<SERVICE_CLASS>.browser-type`. (Default value `lagom`).
 
+* Configure SOAP client `play.soap.services.<SERVICE_CLASS>.singleton` as Singleton for better performance. *Warning*: It can be **NOT** thread-safe. More details see on [CXF docs](http://cxf.apache.org/faq.html#FAQ-AreJAX-WSclientproxiesthreadsafe%3F) (Default value `false`)
+
 ```HOCON
 lagom.circuit-breaker {
   default.exception-whitelist = [
@@ -148,6 +150,7 @@ play.soap.services {
   com.foo.bar.service.Service {
     address = "http://domain:PORT/service"
     browser-type = "Lagom MyService"
+    singleton: false
     breaker = {
       call-timeout = 10s
     }

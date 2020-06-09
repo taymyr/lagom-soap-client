@@ -23,12 +23,13 @@ interface ServiceGuiceSupport : com.lightbend.lagom.javadsl.server.ServiceGuiceS
      *
      * @param serviceClass Class of type SOAP service
      * @param portClass Class of type SOAP service port
+     * @param invokeHandlers Invocation method handlers
      * @param handlers SOAP message handlers
      * @param S Type of SOAP service
      * @param P Type of SOAP service port
      */
     @JvmDefault
-    fun <S : PlaySoapClient, P> bindSoapClient(serviceClass: Class<S>, portClass: Class<P>, vararg handlers: Handler<SOAPMessageContext>) {
+    fun <S : PlaySoapClient, P> bindSoapClient(serviceClass: Class<S>, portClass: Class<P>, invokeHandlers: List<InvokeHandler<P>>, vararg handlers: Handler<SOAPMessageContext>) {
         val binder = binder(this)
         val serviceProvider = binder.getProvider(serviceClass)
         val breakersProvider = binder.getProvider(CircuitBreakersPanel::class.java)
@@ -37,7 +38,7 @@ interface ServiceGuiceSupport : com.lightbend.lagom.javadsl.server.ServiceGuiceS
             val provider = ServiceProviderImpl(
                 serviceClass, portClass,
                 serviceProvider, breakersProvider,
-                configProvider, *handlers
+                configProvider, invokeHandlers, *handlers
             )
             binder.bind(portClass).toProvider(provider).`in`(Singleton::class.java)
             val providerType = TypeUtils.parameterize(ServiceProvider::class.java, portClass)
@@ -47,5 +48,19 @@ interface ServiceGuiceSupport : com.lightbend.lagom.javadsl.server.ServiceGuiceS
             val message = "Incorrect classes params for binding soap client.\nMethod with return type %s not found in %s."
             binder.addError(Message(this, format(message, portClass.name, serviceClass.name)))
         }
+    }
+
+    /**
+     * Binding SOAP service of type `S`, his port of type `P` and SOAP message handlers.
+     *
+     * @param serviceClass Class of type SOAP service
+     * @param portClass Class of type SOAP service port
+     * @param handlers SOAP message handlers
+     * @param S Type of SOAP service
+     * @param P Type of SOAP service port
+     */
+    @JvmDefault
+    fun <S : PlaySoapClient, P> bindSoapClient(serviceClass: Class<S>, portClass: Class<P>, vararg handlers: Handler<SOAPMessageContext>) {
+        bindSoapClient(serviceClass, portClass, emptyList<InvokeHandler<P>>(), *handlers)
     }
 }

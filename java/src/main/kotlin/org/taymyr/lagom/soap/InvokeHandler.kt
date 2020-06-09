@@ -12,6 +12,12 @@ package org.taymyr.lagom.soap
 interface InvokeHandler<T> {
 
     /**
+     * After init of the port object of SOAP service.
+     * @param service SOAP service
+     */
+    fun afterInit(service: T)
+
+    /**
      * Before invoking a method of SOAP service.
      * @param service SOAP service
      */
