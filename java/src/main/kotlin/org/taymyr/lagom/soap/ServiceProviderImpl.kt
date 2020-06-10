@@ -53,9 +53,9 @@ constructor(
     private fun findGetPortMethod(serviceClass: Class<S>, portClass: Class<P>): Method =
         serviceClass.methods.find { method ->
             method.returnType == portClass &&
-            method.parameterCount == 1 &&
-            method.parameters[0].type.isArray &&
-            method.parameters[0].type.componentType == Handler::class.java
+                method.parameterCount == 1 &&
+                method.parameters[0].type.isArray &&
+                method.parameters[0].type.componentType == Handler::class.java
         } ?: throw NoSuchMethodException()
 
     override fun get(): P = get(emptyList())
@@ -94,16 +94,18 @@ constructor(
             this.soapHandlers = arrayOf(*soapHandlers).plus(handlers)
         }
 
-        override fun invoke(self: Any?, thisMethod: Method?, proceed: Method?, args: Array<out Any>?): Any =
-            breakersProvider.get().withCircuitBreaker(name) {
+        override fun invoke(self: Any?, thisMethod: Method?, proceed: Method?, args: Array<out Any>?): Any {
+            val port = createPort(thisMethod!!)
+            return breakersProvider.get().withCircuitBreaker(name) {
                 try {
-                    invokeService(thisMethod!!, args ?: emptyArray())
+                    invokeService(port, thisMethod!!, args ?: emptyArray())
                 } catch (e: IllegalAccessException) {
                     throw RuntimeException(e)
                 } catch (e: InvocationTargetException) {
                     throw RuntimeException(e)
                 }
             }
+        }
 
         private fun before(port: P, method: Method) =
             invokeHandlers.forEach {
@@ -124,7 +126,19 @@ constructor(
             }
 
         @Throws(InvocationTargetException::class, IllegalAccessException::class)
-        private fun invokeService(thisMethod: Method, args: Array<out Any>): CompletionStage<Any> {
+        private fun invokeService(port: P, method: Method, args: Array<out Any>): CompletionStage<Any> {
+            before(port, method)
+            return (method.invoke(port, *args) as CompletionStage<*>).handle { result, throwable ->
+                after(port, method)
+                throwable?.let {
+                    if (throwable.javaClass.isAnnotationPresent(WebFault::class.java)) throw WebFaultException(throwable)
+                    throw RuntimeException(format("Failed invoke '%s'", method), throwable)
+                }
+                result
+            }
+        }
+
+        private fun createPort(thisMethod: Method): P {
             // http://cxf.apache.org/faq.html#FAQ-AreJAX-WSclientproxiesthreadsafe%3F
             @Suppress("unchecked_cast")
             val port = getPortMethod.invoke(service, soapHandlers as Any) as P
@@ -135,15 +149,7 @@ constructor(
             httpClientPolicy.connectionTimeout = timeout
             httpClientPolicy.connectionRequestTimeout = timeout
             httpClientPolicy.browserType = config.extract("browser-type") ?: "lagom"
-            before(port, thisMethod)
-            return (thisMethod.invoke(port, *args) as CompletionStage<*>).handle { result, throwable ->
-                after(port, thisMethod)
-                throwable?.let {
-                    if (throwable.javaClass.isAnnotationPresent(WebFault::class.java)) throw WebFaultException(throwable)
-                    throw RuntimeException(format("Failed invoke '%s'", thisMethod), throwable)
-                }
-                result
-            }
+            return port
         }
     }
 }
