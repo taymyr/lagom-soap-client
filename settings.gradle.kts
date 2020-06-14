@@ -1,5 +1,5 @@
-include("java", "scala")
+include("java")
 
 rootProject.name = "lagom-soap-client"
 project(":java").name = "lagom-soap-client-java"
-project(":scala").name = "lagom-soap-client-scala"
+//project(":scala").name = "lagom-soap-client-scala"
