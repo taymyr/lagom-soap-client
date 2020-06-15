@@ -10,13 +10,13 @@ categories:
       - 'dependencies'
 
 template: |
-  # :mega: Lagom Soap Clietn X.Y.Z released!
+  # :mega: Lagom Soap Client X.Y.Z released!
 
   We are pleased to announce the release of SOAP module for [Lagom](https://www.lagomframework.com/) framework.
 
   ## :green_book: What’s Changed
 
-  All the changes you can see on the corresponding page of [GitHub Milestone](https://github.com/taymyr/lagom-extensions/milestone/1?closed=1)
+  All the changes you can see on the corresponding page of [GitHub Milestone](https://github.com/taymyr/lagom-soap-client/milestone/2?closed=1)
 
   $CHANGES
 
