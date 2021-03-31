@@ -11,8 +11,8 @@ if [[ $VERSION =~ ^.*-SNAPSHOT$ ]]; then
       -Psigning.keyId=$GPG_KEY_NAME \
       -Psigning.password="$GPG_PASSPHRASE" \
       -Psigning.secretKeyRingFile=$HOME/.gnupg/taymyr.gpg \
-      -PossrhUsername=$OSS_USERNAME \
-      -PossrhPassword="$OSS_PASSWORD" \
+      -PsonatypeUsername=$OSS_USERNAME \
+      -PsonatypePassword="$OSS_PASSWORD" \
       -PscalaBinaryVersion=$SCALA_VERSION \
       -PlagomVersion=$LAGOM_VERSION
   printMessage "SNAPSHOT $VERSION PUBLISHED FOR SCALA $SCALA_VERSION"
