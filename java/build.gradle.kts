@@ -10,7 +10,7 @@ object Versions {
     const val lagom = "1.4.6" // "1.5.0-RC1"
     const val ktlint = "0.41.0"
     const val `kotlin-logging` = "1.6.22"
-    const val config4k = "0.4.1"
+    const val config4k = "0.4.2"
     const val javassist = "3.21.0-GA"
     const val `play-soap` = "1.1.5"
     const val junit5 = "5.3.2"
