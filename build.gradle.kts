@@ -1,20 +1,21 @@
+import fr.brouillard.oss.jgitver.Strategies.MAVEN
 import java.time.Duration
-
-val ossrhUsername: String? by project
-val ossrhPassword: String? by project
-val projectVersion: String by project
 
 plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.0.0"
+    id("fr.brouillard.oss.gradle.jgitver") version "0.9.1"
 }
 
 allprojects {
     group = "org.taymyr.lagom"
-    version = projectVersion
     repositories {
         mavenCentral()
         jcenter()
     }
+}
+
+jgitver {
+    strategy(MAVEN)
 }
 
 nexusPublishing {

@@ -12,10 +12,10 @@ import static org.taymyr.lagom.soap.WebFaultException.processWebFault;
 
 class WebFaultExceptionTest {
 
-    private class BusinessException extends Exception {
+    private static class BusinessException extends Exception {
     }
 
-    private Function<Throwable, String> processException = e -> (e instanceof BusinessException) ? "business" : "unknown";
+    private final Function<Throwable, String> processException = e -> (e instanceof BusinessException) ? "business" : "unknown";
 
     @Test
     @DisplayName("Processing WebFaultException should be to process cause exception")
@@ -39,9 +39,10 @@ class WebFaultExceptionTest {
     }
 
     @Test
-    @DisplayName("Processing null should be throw IllegalArgumentException")
+    @DisplayName("Processing null should be throw NullPointerException")
     void processNullShouldThrowIllegalArgument() {
-        assertThatThrownBy(() -> processWebFault(null, processException)).isInstanceOf(IllegalArgumentException.class);
+        //noinspection ConstantConditions
+        assertThatThrownBy(() -> processWebFault(null, processException)).isInstanceOf(NullPointerException.class);
     }
 
 }

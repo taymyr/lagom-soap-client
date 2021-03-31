@@ -8,7 +8,7 @@ val isReleaseVersion = !version.toString().endsWith("-SNAPSHOT")
 object Versions {
     const val scalaBinary = "2.12"
     const val lagom = "1.4.6" // "1.5.0-RC1"
-    const val ktlint = "0.29.0"
+    const val ktlint = "0.41.0"
     const val `kotlin-logging` = "1.6.22"
     const val config4k = "0.4.1"
     const val javassist = "3.21.0-GA"
@@ -21,9 +21,9 @@ val lagomVersion = project.properties["lagomVersion"] as String? ?: Versions.lag
 val scalaBinaryVersion = project.properties["scalaBinaryVersion"] as String? ?: Versions.scalaBinary
 
 plugins {
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.4.32"
     id("org.jetbrains.dokka") version "0.9.17"
-    id("org.jlleitschuh.gradle.ktlint") version "6.3.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     `maven-publish`
     signing
     jacoco
@@ -34,23 +34,25 @@ compileKotlin.kotlinOptions.jvmTarget = "1.8"
 compileKotlin.kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
 
 dependencies {
-    compile(kotlin("stdlib-jdk8"))
-    compile("com.lightbend.lagom", "lagom-javadsl-server_$scalaBinaryVersion" , lagomVersion)
-    compile("com.typesafe.play", "play-soap-client_$scalaBinaryVersion", Versions.`play-soap`)
-    compile("org.javassist", "javassist", Versions.javassist)
-    compile("io.github.microutils", "kotlin-logging", Versions.`kotlin-logging`)
-    compile("io.github.config4k", "config4k", Versions.config4k)
+    api(kotlin("stdlib-jdk8"))
+    api("com.lightbend.lagom", "lagom-javadsl-server_$scalaBinaryVersion", lagomVersion)
+    api("com.typesafe.play", "play-soap-client_$scalaBinaryVersion", Versions.`play-soap`)
+    api("org.javassist", "javassist", Versions.javassist)
+    api("io.github.microutils", "kotlin-logging", Versions.`kotlin-logging`)
+    api("io.github.config4k", "config4k", Versions.config4k)
 
-    testCompile("org.junit.jupiter", "junit-jupiter-api", Versions.junit5)
-    testCompile("org.junit.jupiter", "junit-jupiter-params", Versions.junit5)
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", Versions.junit5)
-    testCompile("org.assertj", "assertj-core", Versions.assertj)
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", Versions.junit5)
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", Versions.junit5)
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", Versions.junit5)
+    testImplementation("org.assertj", "assertj-core", Versions.assertj)
 }
 
 ktlint {
     version.set(Versions.ktlint)
     outputToConsole.set(true)
-    reporters.set(setOf(ReporterType.CHECKSTYLE))
+    reporters {
+        reporter(ReporterType.CHECKSTYLE)
+    }
 }
 
 tasks.withType<Test> {
@@ -87,9 +89,11 @@ tasks.dokka {
     jdkVersion = 8
     reportUndocumented = true
     impliedPlatforms = mutableListOf("JVM")
-    externalDocumentationLink(delegateClosureOf<DokkaConfiguration.ExternalDocumentationLink.Builder> {
-        url = URL("https://www.lagomframework.com/documentation/1.4.x/java/api/")
-    })
+    externalDocumentationLink(
+        delegateClosureOf<DokkaConfiguration.ExternalDocumentationLink.Builder> {
+            url = URL("https://www.lagomframework.com/documentation/1.4.x/java/api/")
+        }
+    )
 }
 
 publishing {

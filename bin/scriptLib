@@ -10,5 +10,5 @@ printMessage() {
 }
 
 version() {
-  grep 'projectVersion' gradle.properties | cut -d'=' -f2
+  ./gradlew -q version | grep 'Version:' | cut -d':' -f2 | xargs
 }
