@@ -9,12 +9,12 @@ printMessage "PUBLISH RELEASE $VERSION FOR SCALA $SCALA_VERSION"
 if [[ $VERSION =~ ^.*-SNAPSHOT$ ]]; then
   printMessage "RELEASE WOULD NOT BE PUBLISHED: is not a stable version"
 else
-  ./gradlew publishToSonatype closeAndReleaseRepository -x test \
+  ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository -x test \
         -Psigning.keyId=$GPG_KEY_NAME \
         -Psigning.password="$GPG_PASSPHRASE" \
         -Psigning.secretKeyRingFile=$HOME/.gnupg/taymyr.gpg \
-        -PossrhUsername=$OSS_USERNAME \
-        -PossrhPassword="$OSS_PASSWORD" \
+        -PsonatypeUsername=$OSS_USERNAME \
+        -PsonatypePassword="$OSS_PASSWORD" \
         -PscalaBinaryVersion=$SCALA_VERSION \
         -PlagomVersion=$LAGOM_VERSION
   printMessage "RELEASE $VERSION PUBLISHED FOR SCALA $SCALA_VERSION"

@@ -3,10 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import java.net.URL
 
-val isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
-
-val ossrhUsername: String? by project
-val ossrhPassword: String? by project
+val isReleaseVersion = !version.toString().endsWith("-SNAPSHOT")
 
 object Versions {
     const val scalaBinary = "2.12"
@@ -27,6 +24,7 @@ plugins {
     kotlin("jvm") version "1.3.21"
     id("org.jetbrains.dokka") version "0.9.17"
     id("org.jlleitschuh.gradle.ktlint") version "6.3.1"
+    `maven-publish`
     signing
     jacoco
 }
