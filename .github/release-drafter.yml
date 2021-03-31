@@ -1,3 +1,5 @@
+name-template: '$NEXT_MINOR_VERSION'
+tag-template: '$NEXT_MINOR_VERSION'
 categories:
   - title: ':rocket: Features'
     labels:
@@ -10,7 +12,7 @@ categories:
       - 'dependencies'
 
 template: |
-  # :mega: Lagom Soap Client X.Y.Z released!
+  # :mega: Lagom Soap Client $NEXT_MINOR_VERSION released!
 
   We are pleased to announce the release of SOAP module for [Lagom](https://www.lagomframework.com/) framework.
 
