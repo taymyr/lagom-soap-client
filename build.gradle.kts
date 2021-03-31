@@ -10,7 +10,6 @@ allprojects {
     group = "org.taymyr.lagom"
     repositories {
         mavenCentral()
-        jcenter()
     }
 }
 
