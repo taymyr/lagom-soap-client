@@ -126,7 +126,8 @@ public class MyServiceImpl implements MyService {
 * Add `org.taymyr.lagom.soap.WebFaultException` to Circuit Breakers whitelist (`lagom.circuit-breaker.default.exception-whitelist`), 
   because all checked SOAP exceptions boxing to `WebFaultException`. Otherwise Circuit Breaker will be opened for all SOAP exceptions.
 
-* Configure Circuit Breaker for SOAP client `lagom.circuit-breaker.<SERVICE_CLASS>`. 
+* Configure Circuit Breaker for SOAP client `lagom.circuit-breaker.<SERVICE_CLASS>`.
+  To configure methods use `lagom.circuit-breaker.<SERVICE_CLASS>.methods.<METHOD_NAME>`
   Highly recommended configuring Circuit Breaker (see all available settings in [Lagom docs](https://www.lagomframework.com/documentation/current/scala/ServiceClients.html#Circuit-Breaker-Configuration)) 
   in `play.soap.services` block and use reference to this configuration in `lagom.circuit-breaker` block.
    
@@ -143,6 +144,8 @@ lagom.circuit-breaker {
   ]
 
   com.foo.bar.service.Service = ${play.soap.services.com.foo.bar.service.Service.breaker}
+  com.foo.bar.service.Service.methods.method1 = ${play.soap.services.com.foo.bar.service.Service.methods.method1.breaker}
+  com.foo.bar.service.Service.methods.method2 = ${play.soap.services.com.foo.bar.service.Service.methods.method2.breaker}
 }
 
 
@@ -153,6 +156,18 @@ play.soap.services {
     singleton: false
     breaker = {
       call-timeout = 10s
+    }
+    methods {
+      method1 {
+        breaker {
+          call-timeout = 20s
+        }
+      }
+      method2 {
+        breaker {
+          call-timeout = 30s
+        }
+      }
     }
   }
 }
