@@ -103,7 +103,13 @@ constructor(
 
         override fun invoke(self: Any?, thisMethod: Method?, proceed: Method?, args: Array<out Any>?): Any {
             val port = if (isSingleton) this.port else createPort()
-            return breakersProvider.get().withCircuitBreaker(name) {
+            val (cbName, cbConfig) =
+                if (breakerConfig.hasPath("methods.${thisMethod?.name}"))
+                    "$name.methods.${thisMethod?.name}" to breakerConfig.getConfig("methods.${thisMethod?.name}").withFallback(breakerConfig)
+                else name to breakerConfig
+            val timeout = cbConfig.getDuration("call-timeout", MILLISECONDS)
+            configureTimeout(port, timeout)
+            return breakersProvider.get().withCircuitBreaker(cbName) {
                 try {
                     invokeService(port, thisMethod!!, args ?: emptyArray())
                 } catch (e: IllegalAccessException) {
@@ -160,13 +166,17 @@ constructor(
             val port = getPortMethod.invoke(service, soapHandlers as Any) as P
             val proxy = Proxy.getInvocationHandler(port) as PlayJaxWsClientProxy
             val httpClientPolicy = (proxy.client.conduit as HTTPConduit).client
-            val timeout = breakerConfig.getDuration("call-timeout", MILLISECONDS)
-            httpClientPolicy.receiveTimeout = timeout
-            httpClientPolicy.connectionTimeout = timeout
-            httpClientPolicy.connectionRequestTimeout = timeout
             httpClientPolicy.browserType = config.extract("browser-type") ?: "lagom"
             afterInit(port)
             return port
+        }
+
+        private fun configureTimeout(port: P, timeout: Long) {
+            val proxy = Proxy.getInvocationHandler(port) as PlayJaxWsClientProxy
+            val httpClientPolicy = (proxy.client.conduit as HTTPConduit).client
+            httpClientPolicy.receiveTimeout = timeout
+            httpClientPolicy.connectionTimeout = timeout
+            httpClientPolicy.connectionRequestTimeout = timeout
         }
     }
 }
