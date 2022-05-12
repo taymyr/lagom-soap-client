@@ -16,6 +16,7 @@ object Versions {
     const val junit5 = "5.3.2"
     const val assertj = "3.11.1"
     const val jacoco = "0.8.2"
+    const val pac4j = "2.0.0"
 }
 val lagomVersion = project.properties["lagomVersion"] as String? ?: Versions.lagom
 val scalaBinaryVersion = project.properties["scalaBinaryVersion"] as String? ?: Versions.scalaBinary
@@ -40,6 +41,7 @@ dependencies {
     api("org.javassist", "javassist", Versions.javassist)
     api("io.github.microutils", "kotlin-logging", Versions.`kotlin-logging`)
     api("io.github.config4k", "config4k", Versions.config4k)
+    api("org.pac4j", "lagom-pac4j_$scalaBinaryVersion", Versions.pac4j)
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", Versions.junit5)
     testImplementation("org.junit.jupiter", "junit-jupiter-params", Versions.junit5)
