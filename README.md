@@ -100,13 +100,14 @@ depending on the headers of the current request.
 ```java
 import static org.taymyr.lagom.soap.WebFaultException.processWebFault;
 import static org.taymyr.lagom.soap.handler.SetUserAgentHandler.userAgent;
+import static org.taymyr.lagom.soap.handler.BasicAuthHandler.basicAuth;
 
 public class MyServiceImpl implements MyService {
 
     @Override
     public HeaderServiceCall<NotUsed, String> myMethod() {
         return (headers, request) -> {
-            ServicePort service = serviceProvider.get(userAgent("Agent"));
+            ServicePort service = serviceProvider.get(userAgent("Agent"), basicAuth("username", "password"));
             return service.foo(new Bar())
                 .thenApplyAsync(result -> ok("Foo: " + result))
                 .exceptionally(throwable -> processWebFault(throwable, e -> {

@@ -9,12 +9,17 @@ import org.taymyr.lagom.soap.handler.AbstractSoapMessageHandler;
 import org.taymyr.lagom.soap.handler.DisableJaxbValidationHandler;
 import org.taymyr.lagom.soap.handler.EnableJaxbValidationHandler;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.pac4j.core.context.HttpConstants.BASIC_HEADER_PREFIX;
+import static org.taymyr.lagom.soap.handler.BasicAuthHandler.basicAuth;
 import static org.taymyr.lagom.soap.handler.SetUserAgentHandler.userAgent;
 
 import static java.util.Collections.singletonList;
@@ -61,6 +66,28 @@ class HandlersTest {
         userAgent(userAgentValue).handleMessage(context);
         headers = (Map<String, List<String>>) context.get(HTTP_REQUEST_HEADERS);
         assertThat(headers).containsEntry(USER_AGENT, singletonList(userAgentValue));
+    }
+
+    @Test
+    @DisplayName("BasicAuthHandler should successfully set `username` and `password` header")
+    @SuppressWarnings("unchecked")
+    void basicAuthHandlerShouldSetHeaderForOutboundMessage() {
+        SOAPMessageContext context = createOutboundMessage();
+        String username = "username1";
+        String password = "password1";
+        basicAuth(username, password).handleMessage(context);
+        Map<String, List<String>> headers = (Map<String, List<String>>) context.get(HTTP_REQUEST_HEADERS);
+        assertThat(headers).containsEntry(AUTHORIZATION, singletonList(
+                BASIC_HEADER_PREFIX + Base64.getEncoder().encodeToString(username.concat(":").concat(password).getBytes(StandardCharsets.UTF_8))
+        ));
+
+        username = "username2";
+        password = "password2";
+        basicAuth(username, password).handleMessage(context);
+        headers = (Map<String, List<String>>) context.get(HTTP_REQUEST_HEADERS);
+        assertThat(headers).containsEntry(AUTHORIZATION, singletonList(
+                BASIC_HEADER_PREFIX + Base64.getEncoder().encodeToString(username.concat(":").concat(password).getBytes(StandardCharsets.UTF_8))
+        ));
     }
 
     @Test
