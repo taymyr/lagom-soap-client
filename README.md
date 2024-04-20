@@ -137,6 +137,8 @@ public class MyServiceImpl implements MyService {
 
 * Configure SOAP client `play.soap.services.<SERVICE_CLASS>.singleton` as Singleton for better performance. *Warning*: It can be **NOT** thread-safe. More details see on [CXF docs](http://cxf.apache.org/faq.html#FAQ-AreJAX-WSclientproxiesthreadsafe%3F) (Default value `false`)
 
+* Configure max log size of you soap-client `play.soap.services.<SERVICE_CLASS>.log-size` (Default value 48 kB). When you use log-size more than 128 kbytes CXF creates temporary files that contains messages, and CXF deletes files by itself.
+
 ```HOCON
 lagom.circuit-breaker {
   default.exception-whitelist = [
@@ -154,6 +156,7 @@ play.soap.services {
     address = "http://domain:PORT/service"
     browser-type = "Lagom MyService"
     singleton: false
+    log-size : 1MB
     breaker = {
       call-timeout = 10s
     }
