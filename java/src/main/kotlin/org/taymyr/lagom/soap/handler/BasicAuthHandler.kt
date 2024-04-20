@@ -1,4 +1,4 @@
-package ru.atconsulting.tele2.lkb2c.handler
+package org.taymyr.lagom.soap.handler
 
 import org.taymyr.lagom.soap.InvokeHandler
 import javax.xml.ws.BindingProvider

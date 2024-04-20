@@ -7,6 +7,7 @@ import io.github.config4k.extract
 import javassist.util.proxy.MethodHandler
 import javassist.util.proxy.ProxyFactory
 import mu.KotlinLogging
+import org.apache.cxf.interceptor.AbstractLoggingInterceptor
 import org.apache.cxf.transport.http.HTTPConduit
 import play.soap.PlayJaxWsClientProxy
 import play.soap.PlaySoapClient
@@ -86,6 +87,7 @@ constructor(
         private val invokeHandlers: List<InvokeHandler<P>>
         private val port: P
         private val isSingleton: Boolean
+        private val logSize: Int?
 
         init {
             val globalConfig = configProvider.get()
@@ -98,6 +100,7 @@ constructor(
             this.soapHandlers = arrayOf(*soapHandlers).plus(handlers)
             this.invokeHandlers = this@ServiceProviderImpl.invokeHandlers.plus(invokeMethodHandlers)
             this.isSingleton = if (config.hasPath("singleton")) config.getBoolean("singleton") else false
+            this.logSize = if (config.hasPath("log-size")) config.getBytes("log-size").toInt() else null
             this.port = if (isSingleton) createPort() else Unit as P
         }
 
@@ -166,6 +169,10 @@ constructor(
             val port = getPortMethod.invoke(service, soapHandlers as Any) as P
             val proxy = Proxy.getInvocationHandler(port) as PlayJaxWsClientProxy
             val httpClientPolicy = (proxy.client.conduit as HTTPConduit).client
+            if (logSize != null) {
+                proxy.client.inInterceptors.filterIsInstance<AbstractLoggingInterceptor>().forEach { it.limit = logSize }
+                proxy.client.outInterceptors.filterIsInstance<AbstractLoggingInterceptor>().forEach { it.limit = logSize }
+            }
             httpClientPolicy.browserType = config.extract("browser-type") ?: "lagom"
             afterInit(port)
             return port
