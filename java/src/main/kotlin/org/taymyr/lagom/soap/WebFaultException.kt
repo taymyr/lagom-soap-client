@@ -54,7 +54,9 @@ class WebFaultException(cause: Throwable) : RuntimeException(cause) {
             if (e is CompletionException) {
                 throwable = throwable?.cause
             }
-            if (throwable is WebFaultException) {
+            // WebFaultException becomes self-nested when an exception is rethrown between coroutines in debug mode
+            // see more https://github.com/Kotlin/kotlinx.coroutines/issues/4527
+            while (throwable is WebFaultException) {
                 throwable = throwable.cause
             }
             return fn.apply(throwable)
