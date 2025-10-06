@@ -178,7 +178,7 @@ play.soap.services {
 
 ## Adding the dependency
 
-All **released** artifacts are available in the [Maven central repository](https://search.maven.org/search?q=a:lagom-soap-client-java_2.12%20AND%20g:org.taymyr.lagom).
+All **released** artifacts are available in the [Maven central repository](https://central.sonatype.com/artifact/org.taymyr.lagom/lagom-soap-client-java_2.13).
 Just add a `lagom-soap-client` to your service dependencies:
 
 * **SBT**
@@ -197,21 +197,22 @@ libraryDependencies += "org.taymyr.lagom" %% "lagom-soap-client-java" % "X.Y.Z"
 </dependency>
 ```
 
-All **snapshot** artifacts are available in the [Sonatype snapshots repository](https://oss.sonatype.org/content/repositories/snapshots/org/taymyr/lagom).
+All **snapshot** artifacts are available in the [Central Portal Snapshots](https://central.sonatype.com/repository/maven-snapshots/org/taymyr/lagom/lagom-soap-client-java_2.13/maven-metadata.xml).
 This repository must be added in your build system. 
 
 * **SBT**
 
 ```scala
-resolvers ++= Resolver.sonatypeRepo("snapshots")
+resolvers += Resolver.sonatypeCentralSnapshots
 ```
 
 * **Maven**
 ```xml
 <repositories>
   <repository>
-    <id>snapshots-repo</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <name>Central Portal Snapshots</name>
+    <id>central-portal-snapshots</id>
+    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     <releases><enabled>false</enabled></releases>
     <snapshots><enabled>true</enabled></snapshots>
   </repository>
