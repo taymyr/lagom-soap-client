@@ -9,7 +9,7 @@ object Versions {
     const val scalaBinary = "2.12"
     const val lagom = "1.4.6" // "1.5.0-RC1"
     const val ktlint = "0.41.0"
-    const val `kotlin-logging` = "1.6.22"
+    const val `kotlin-logging` = "3.0.5"
     const val config4k = "0.4.2"
     const val javassist = "3.21.0-GA"
     const val `play-soap` = "1.1.5"
@@ -21,7 +21,7 @@ val lagomVersion = project.properties["lagomVersion"] as String? ?: Versions.lag
 val scalaBinaryVersion = project.properties["scalaBinaryVersion"] as String? ?: Versions.scalaBinary
 
 plugins {
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "2.0.20"
     id("org.jetbrains.dokka") version "0.9.17"
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
     `maven-publish`
@@ -31,7 +31,7 @@ plugins {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
-compileKotlin.kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
+compileKotlin.kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
 
 dependencies {
     api(kotlin("stdlib-jdk8"))

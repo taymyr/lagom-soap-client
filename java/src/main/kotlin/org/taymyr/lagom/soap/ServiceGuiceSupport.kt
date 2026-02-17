@@ -28,7 +28,6 @@ interface ServiceGuiceSupport : com.lightbend.lagom.javadsl.server.ServiceGuiceS
      * @param S Type of SOAP service
      * @param P Type of SOAP service port
      */
-    @JvmDefault
     fun <S : PlaySoapClient, P> bindSoapClient(serviceClass: Class<S>, portClass: Class<P>, invokeHandlers: List<InvokeHandler<P>>, vararg handlers: Handler<SOAPMessageContext>) {
         val binder = binder(this)
         val serviceProvider = binder.getProvider(serviceClass)
@@ -59,7 +58,6 @@ interface ServiceGuiceSupport : com.lightbend.lagom.javadsl.server.ServiceGuiceS
      * @param S Type of SOAP service
      * @param P Type of SOAP service port
      */
-    @JvmDefault
     fun <S : PlaySoapClient, P> bindSoapClient(serviceClass: Class<S>, portClass: Class<P>, vararg handlers: Handler<SOAPMessageContext>) {
         bindSoapClient(serviceClass, portClass, emptyList<InvokeHandler<P>>(), *handlers)
     }
